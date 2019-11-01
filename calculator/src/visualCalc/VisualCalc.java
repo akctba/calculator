@@ -57,8 +57,10 @@ public class VisualCalc {
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		JPanel panel = new JPanel();
 		
-		// set the border of the result area
+		//TODO the scroll isn't working...
 		panel.setLayout(new FlowLayout());
+
+		// set the border of the result area
 		panel.setBorder(title);
 		panel.setSize(200, 100);
 		panel.add(scroll);
