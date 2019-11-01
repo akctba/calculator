@@ -1,4 +1,5 @@
 package visualCalc;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -28,8 +29,11 @@ import javax.swing.border.TitledBorder;
  *
  */
 public class VisualCalc {
+	
+	/** Decimal scale to results */
+	private static final int DEF_SCALE = 5;
 
-	public static void addComponentsToPane(Container frame) {
+	private static void addComponentsToPane(Container frame) {
 
 		// frame.setLayout(new GridLayout(6,4));
 		// frame.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -45,7 +49,7 @@ public class VisualCalc {
 		c.gridy = 0;
 		c.gridwidth = 5;
 		frame.add(header, c);
-		
+
 		Result area = new Result("");
 		area.setBackground(Color.white);
 
@@ -56,8 +60,8 @@ public class VisualCalc {
 		JScrollPane scroll = new JScrollPane(area);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		JPanel panel = new JPanel();
-		
-		//TODO the scroll isn't working...
+
+		// TODO the scroll isn't working...
 		panel.setLayout(new FlowLayout());
 
 		// set the border of the result area
@@ -66,7 +70,7 @@ public class VisualCalc {
 		panel.add(scroll);
 
 		// alinhar a direita
-		//area.setHorizontalAlignment(SwingConstants.RIGHT);
+		// area.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -110,123 +114,135 @@ public class VisualCalc {
 		JButton sub = new JButton("-");
 		JButton mul = new JButton("x");
 		JButton div = new JButton("/");
-		JButton equ = new JButton("=");
+		JButton clear = new JButton("AC");
+
+		// ## Button AC
+		clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				number.setText("0.0");
+				result.setText("0.0");
+				area.setText("");
+
+			}
+		});
 
 		// ## Button Add
 		add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(result.getText() == null || result.getText().equals("")) {
-					//so joga o valor pro campo result
+
+				if (result.getText() == null || result.getText().equals("")) {
+					// so joga o valor pro campo result
 					result.setText(toNumber(number.getText()).toString());
 					String tmp = area.getText();
 					tmp = addLine(tmp, number.getText());
-					
+
 					area.setText(tmp);
-					
+
 				} else {
-					
+
 					// last result + next value
 					BigDecimal prev = toNumber(result.getText());
 					BigDecimal next = toNumber(number.getText());
-					
+
 					String tmp = area.getText();
 					tmp = addLine(tmp, "+ " + number.getText());
-					
 					area.setText(tmp);
-					
-					result.setText(prev.add(next).toString());
+
+					BigDecimal res = prev.add(next);
+					res.setScale(DEF_SCALE);
+					result.setText(res.toString());
 				}
-				
+
 			}
 		});
-		
+
 		// ## Button Sub
-				sub.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						
-						if(result.getText() == null || result.getText().equals("")) {
-							//so joga o valor pro campo result
-							result.setText(toNumber(number.getText()).toString());
-							String tmp = area.getText();
-							tmp = addLine(tmp, number.getText());
-							
-							area.setText(tmp);
-							
-						} else {
-							
-							// last result + next value
-							BigDecimal prev = toNumber(result.getText());
-							BigDecimal next = toNumber(number.getText());
-							
-							String tmp = area.getText();
-							tmp = addLine(tmp, "- " + number.getText());
-							
-							area.setText(tmp);
-							
-							result.setText(prev.subtract(next).toString());
-						}
-						
-					}
-				});
-				
-				// ## Button Mul
-				mul.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						
-						if(result.getText() == null || result.getText().equals("")) {
-							//so joga o valor pro campo result
-							result.setText(toNumber(number.getText()).toString());
-							String tmp = area.getText();
-							tmp = addLine(tmp, number.getText());
-							
-							area.setText(tmp);
-							
-						} else {
-							
-							// last result + next value
-							BigDecimal prev = toNumber(result.getText());
-							BigDecimal next = toNumber(number.getText());
-							
-							String tmp = area.getText();
-							tmp = addLine(tmp, "* " + number.getText());
-							
-							area.setText(tmp);
-							
-							result.setText(prev.multiply(next).toString());
-						}
-						
-					}
-				});
-				
-				// ## Button Mul
-				div.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						
-						if(result.getText() == null || result.getText().equals("")) {
-							//so joga o valor pro campo result
-							result.setText(toNumber(number.getText()).toString());
-							String tmp = area.getText();
-							tmp = addLine(tmp, number.getText());
-							
-							area.setText(tmp);
-							
-						} else {
-							
-							// last result + next value
-							BigDecimal prev = toNumber(result.getText());
-							BigDecimal next = toNumber(number.getText());
-							
-							String tmp = area.getText();
-							tmp = addLine(tmp, "/ " + number.getText());
-							
-							area.setText(tmp);
-							
-							result.setText(prev.divide(next).toString());
-						}
-						
-					}
-				});
+		sub.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (result.getText() == null || result.getText().equals("")) {
+					// so joga o valor pro campo result
+					result.setText(toNumber(number.getText()).toString());
+					String tmp = area.getText();
+					tmp = addLine(tmp, number.getText());
+
+					area.setText(tmp);
+
+				} else {
+
+					// last result + next value
+					BigDecimal prev = toNumber(result.getText());
+					BigDecimal next = toNumber(number.getText());
+
+					String tmp = area.getText();
+					tmp = addLine(tmp, "- " + number.getText());
+
+					area.setText(tmp);
+
+					result.setText(prev.subtract(next).toString());
+				}
+
+			}
+		});
+
+		// ## Button Mul
+		mul.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (result.getText() == null || result.getText().equals("")) {
+					// so joga o valor pro campo result
+					result.setText(toNumber(number.getText()).toString());
+					String tmp = area.getText();
+					tmp = addLine(tmp, number.getText());
+
+					area.setText(tmp);
+
+				} else {
+
+					// last result + next value
+					BigDecimal prev = toNumber(result.getText());
+					BigDecimal next = toNumber(number.getText());
+
+					String tmp = area.getText();
+					tmp = addLine(tmp, "* " + number.getText());
+
+					area.setText(tmp);
+
+					result.setText(prev.multiply(next).toString());
+				}
+
+			}
+		});
+
+		// ## Button Mul
+		div.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (result.getText() == null || result.getText().equals("")) {
+					// so joga o valor pro campo result
+					result.setText(toNumber(number.getText()).toString());
+					String tmp = area.getText();
+					tmp = addLine(tmp, number.getText());
+
+					area.setText(tmp);
+
+				} else {
+
+					// last result + next value
+					BigDecimal prev = toNumber(result.getText());
+					BigDecimal next = toNumber(number.getText());
+
+					String tmp = area.getText();
+					tmp = addLine(tmp, "/ " + number.getText());
+
+					area.setText(tmp);
+
+					result.setText(prev.divide(next).toString());
+				}
+
+			}
+		});
 
 		c.insets = new Insets(20, 5, 20, 5); // top left right padding
 		c.gridwidth = 1;
@@ -244,25 +260,24 @@ public class VisualCalc {
 		frame.add(div, c);
 
 		c.gridx = 4;
-		frame.add(equ, c);
+		frame.add(clear, c);
 
 	}
 
-	protected static String addLine(String old, String text) {
+	private static String addLine(String old, String text) {
 		final String OPEN = "<html>";
 		final String CLOSE = "</html>";
 		final String BREAK = "<br/>";
-		
+
 		String tmp;
-		
-		if(old == null || "".equals(old)) {
+
+		if (old == null || "".equals(old)) {
 			tmp = OPEN + text + CLOSE;
 		} else {
 			tmp = old.replaceAll(CLOSE, "");
 			tmp = tmp + BREAK + text + CLOSE;
 		}
-		
-		
+
 		return tmp;
 	}
 
@@ -283,18 +298,18 @@ public class VisualCalc {
 		// Display the window.
 		frame.setVisible(true);
 	}
-	
+
 	private static BigDecimal toNumber(String txt) {
-		
+
 		BigDecimal n = new BigDecimal(0);
-		
+
 		try {
-			double num = Double.parseDouble(txt);
-			n = new BigDecimal(num);
+			n = new BigDecimal(txt);
+			n = n.setScale(DEF_SCALE);
 		} catch (Exception e) {
 			// TODO log debug
 		}
-		
+
 		return n;
 	}
 
